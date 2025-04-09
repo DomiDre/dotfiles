@@ -1,0 +1,26 @@
+[fish.files]
+fish = "~/.config/fish"
+
+[i3.files]
+i3 = "~/.config/i3/config"
+
+[kitty.files]
+kitty = "~/.config/kitty"
+
+[nvim.files]
+nvim = "~/.config/nvim/init.lua"
+
+[picom.files]
+picom = "~/.config/picom"
+
+[polybar.files]
+polybar = "~/.config/polybar"
+
+[xfce4.files]
+xfce4 = "~/.config/xfce4/xinitrc"
+
+[yazi.files]
+yazi = "~/.config/yazi/keymap.toml"
+
+[settings]
+default_target_type = "symbolic"
