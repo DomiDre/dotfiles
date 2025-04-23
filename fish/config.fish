@@ -18,3 +18,5 @@ zoxide init fish | source
 
 # remap capslock to ctrl
 setxkbmap -option 'caps:ctrl_modifier'
+
+set -gx EDITOR nvim
