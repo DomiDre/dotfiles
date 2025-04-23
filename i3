@@ -16,7 +16,7 @@ font pango:monospace 12
 # exec_always --no-startup-id autotiling
 
 # set the wallpaper
-exec --no-startup-id feh feh --bg-center /home/domidre/Pictures/wallpaper/city.jpg
+exec_always --no-startup-id feh --bg-center /home/domidre/Pictures/wallpaper/city.jpg
 
 # launch polybar
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
@@ -141,6 +141,12 @@ bindsym $mod+Shift+7 move container to workspace number $ws7
 bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# assigns
+# assign [class="LibreWolf"] $ws2
+assign [class="Spotify"] $ws4
+assign [title="Obsidian"] $ws5
+assign [title="Element"] $ws5
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
