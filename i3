@@ -145,7 +145,6 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 # assigns
 # assign [class="LibreWolf"] $ws2
 assign [class="Spotify"] $ws4
-assign [title="Obsidian"] $ws5
 assign [title="Element"] $ws5
 
 # reload the configuration file
