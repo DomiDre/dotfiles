@@ -1,0 +1,1 @@
+netbird completions fish
