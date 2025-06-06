@@ -39,8 +39,43 @@ layout {
     tab name="Coding" {
 
         pane split_direction="vertical" {
-            pane size="70%";
+            pane size="70%" {
+                command "nvim"
+                args "."
+            };
             pane size="30%";
+        }
+    }
+    tab name="Services" {
+        pane split_direction="vertical" {
+            pane size="50%" split_direction="horizontal" {
+                pane size="50%";
+                pane size="50%";
+            }
+            pane size="50%" split_direction="horizontal" {
+                pane size="50%";
+                pane size="50%";
+            }
+        }
+    }
+    tab name="State" {
+        pane split_direction="vertical" {
+            pane size="50%" split_direction="horizontal" {
+                pane size="50%" {
+                    command "btop"
+                };
+                pane size="50%" {
+                    command "glances"
+                };
+            }
+            pane size="50%" split_direction="horizontal" {
+                pane size="50%" {
+                    command "nvtop"
+                };
+                pane size="50%" {
+                    command "screenfetch"
+                };
+            }
         }
     }
 }
