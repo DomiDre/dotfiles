@@ -22,5 +22,8 @@ xfce4 = "~/.config/xfce4/xinitrc"
 [yazi.files]
 yazi = "~/.config/yazi/keymap.toml"
 
+[zellij.files]
+zellij = "~/.config/zellij"
+
 [settings]
 default_target_type = "symbolic"
