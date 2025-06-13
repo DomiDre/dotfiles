@@ -1167,6 +1167,40 @@ require("lazy").setup({
 			},
 		},
 	},
+	{
+		"jvgrootveld/telescope-zoxide",
+		config = function()
+			local t = require("telescope")
+			t.setup({
+				extensions = {
+					zoxide = {
+						prompt_title = "Zoxide",
+						mappings = {
+							default = {
+								after_action = function(selection)
+									vim.cmd("Oil " .. selection.path)
+									vim.api.nvim_feedkeys("_", "", false)
+								end,
+							},
+						},
+					},
+				},
+			})
+			t.load_extension("zoxide")
+			-- This let you only have keymapping attached to oil buffer.
+			vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+				pattern = { "oil://*" },
+				callback = function()
+					vim.keymap.set(
+						"n",
+						"<leader>z",
+						t.extensions.zoxide.list,
+						{ desc = "Change directory with [z]oxide", buffer = 0 }
+					)
+				end,
+			})
+		end,
+	},
 }, {
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
