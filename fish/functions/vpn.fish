@@ -14,6 +14,12 @@ function vpn --description 'Connect to VPN'
         return 1
     end
 
+    # Check if already active
+    if nmcli connection show --active | grep -q "^$vpnname\b"
+        echo "✅ Already connected to $vpnname"
+        return 0
+    end
+
     echo "Checking passphrase for UID $vpnname"
     
     # Get passphrase from Secret Service
@@ -23,14 +29,20 @@ function vpn --description 'Connect to VPN'
         echo "❌ Could not retrieve passphrase from secret agent"
         return 1
     end
-    echo "Got the password. Going to connect"
     
     set output (expect -c "
         log_user 1
         spawn nmcli c up $vpnname --ask
-        expect \"Password (vpn.secrets.password):\"
-        send \"$pass\r\"
-        expect eof
+        expect {
+            \"Password (vpn.secrets.password):\"
+            {
+                send \"$pass\\r\"
+                expect eof
+            }
+            eof
+            {
+            }
+        }
     ")
     echo $output
 end
