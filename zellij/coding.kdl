@@ -37,14 +37,7 @@ layout {
     }
 
     tab name="Coding" {
-
-        pane split_direction="vertical" {
-            pane size="70%" {
-                command "nvim"
-                args "."
-            };
-            pane size="30%";
-        }
+        pane;
     }
     tab name="Services" {
         pane split_direction="vertical" {
@@ -58,6 +51,13 @@ layout {
             }
         }
     }
+    tab name="Coding2" {
+        pane;
+    }
+    tab name="Server" {
+        pane;
+    }
+
     // tab name="State" {
     //     pane split_direction="vertical" {
     //         pane size="50%" split_direction="horizontal" {
