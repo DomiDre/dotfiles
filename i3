@@ -41,6 +41,8 @@ floating_modifier $mod
 # or left-clicking anywhere into the window while holding the floating modifier.
 tiling_drag modifier titlebar
 
+focus_follows_mouse no
+
 # start a terminal etc.
 bindsym $mod+Return exec i3-sensible-terminal
 bindsym control+mod1+t exec i3-sensible-terminal
