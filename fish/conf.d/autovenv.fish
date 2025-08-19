@@ -20,9 +20,9 @@ function _autovenv_safe_deactivate
 end
 
 function applyAutoenv
-  test ! "$autovenv_enable" = "yes"
-  or not status is-interactive
-  and return
+  if test "$autovenv_enable" != "yes"; or not status is-interactive
+    return
+  end
 
   set _tree (pwd)
   set -e _source
@@ -40,38 +40,49 @@ function applyAutoenv
     set _tree (dirname $_tree)
   end
 
-  if test \( -z "$VIRTUAL_ENV" -o "$_autovenv_initialized" = "0" \) -a -e "$_source"
+  # No venv active (or first prompt) but we found one -> activate
+  if test \( -z "$VIRTUAL_ENV" -o "$_autovenv_initialized" = "0" \) -a -n "$_source"
     source "$_source"
     if test "$autovenv_announce" = "yes"
       echo "Activated Virtual Environment ($__autovenv_new)"
     end
 
+  # A venv is active -> maybe deactivate or switch
   else if test -n "$VIRTUAL_ENV"
-    set -l ve (string escape --style=regex -- "$VIRTUAL_ENV")
-    set -l pattern (string join '' '^' $ve '(/|\$)')
-    if string match -rq -- $pattern (pwd)
-      set -l _in_venv_tree yes
+    if test -n "$_source"
+      # derive venv root from the found activate path: .../.venv/bin/activate.fish -> .../.venv
+      set -l _found_venv (dirname (dirname "$_source"))
+      if test "$_found_venv" != "$VIRTUAL_ENV"
+        _autovenv_safe_deactivate
+        source "$_source"
+        if test "$autovenv_announce" = "yes"
+          echo "Switched Virtual Environments ($__autovenv_old => $__autovenv_new)"
+        end
+      end
     else
-      set -e _in_venv_tree
-    end
-
-    # Left the venv tree entirely → deactivate
-    if test -z "$_in_venv_tree" -a ! -e "$_source"
+      # left any project that has a venv -> deactivate
       _autovenv_safe_deactivate
       if test "$autovenv_announce" = "yes"
-        echo "Deactivated Virtual Enviroment ($__autovenv_new)"
+        echo "Deactivated Virtual Environment ($__autovenv_new)"
         set -e __autovenv_new
         set -e __autovenv_old
-      end
-
-    # Moved from one venv to another → switch
-    else if test -z "$_in_venv_tree" -a -e "$_source"
-      _autovenv_safe_deactivate
-      source "$_source"
-      if test "$autovenv_announce" = "yes"
-        echo "Switched Virtual Environments ($__autovenv_old => $__autovenv_new)"
       end
     end
   end
 end
 
+# Run on every directory change
+function autovenv --on-variable PWD -d "Automatic activation of Python virtual environments"
+  applyAutoenv
+end
+
+# Track initialization state
+set --global _autovenv_initialized 0
+
+# Run once on the first prompt of a new shell
+function __autovenv_on_prompt --on-event fish_prompt
+  if test "$_autovenv_initialized" = "0"
+    applyAutoenv
+    set --global _autovenv_initialized 1
+  end
+end
