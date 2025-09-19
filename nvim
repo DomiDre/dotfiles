@@ -137,6 +137,15 @@ vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, {
 		end
 	end,
 })
+
+-- Enable spell checking for markdown files
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "markdown",
+	callback = function()
+		vim.opt_local.spell = true
+		vim.opt_local.spelllang = "en_us"
+	end,
+})
 -- Install `lazy.nvim` plugin manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -835,6 +844,11 @@ require("lazy").setup({
 				"jsonc",
 				"vim",
 				"vimdoc",
+				"svelte",
+				"javascript",
+				"typescript",
+				"css",
+				"scss",
 			},
 			-- Autoinstall languages that are not installed
 			auto_install = true,
@@ -1032,57 +1046,6 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>rp", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
 				desc = "Search on current file",
 			})
-		end,
-	},
-	{
-		"olimorris/codecompanion.nvim",
-		opts = {},
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		config = function()
-			local secrets = require("local.secrets")
-
-			require("codecompanion").setup({
-
-				adapters = {
-					my_openai = function()
-						return require("codecompanion.adapters").extend("openai_compatible", {
-							env = {
-								url = "https://llm.bez",
-								api_key = secrets.openwebui_api_key,
-								chat_url = "/api/chat/completions",
-								models_endpoint = "/api/models",
-							},
-							schema = {
-								model = {
-									default = "deepcoder:latest",
-								},
-							},
-						})
-					end,
-				},
-				strategies = {
-					chat = {
-						adapter = "my_openai",
-					},
-					inline = {
-						adapter = "my_openai",
-					},
-				},
-			})
-			vim.keymap.set({ "n", "v" }, "<C-a>", "<cmd>CodeCompanionActions<cr>", { noremap = true, silent = true })
-			vim.keymap.set(
-				{ "n", "v" },
-				"<LocalLeader>c",
-				"<cmd>CodeCompanionChat Toggle<cr>",
-				{ noremap = true, silent = true }
-			)
-			vim.keymap.set("v", "ga", "<cmd>CodeCompanionChat Add<cr>", { noremap = true, silent = true })
-
-			-- Expand 'cc' into 'CodeCompanion' in the command line
-			vim.cmd([[cab cc CodeCompanion]])
 		end,
 	},
 	{
