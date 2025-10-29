@@ -789,7 +789,19 @@ require("lazy").setup({
 	},
 
 	{ -- Collection of various small independent plugins/modules
-		"echasnovski/mini.nvim",
+		"nvim-mini/mini.nvim",
+		version = false,
+		keys = {
+			{
+				mode = "n",
+				"<Leader>e",
+				function()
+					local fileeditor = require("mini.files")
+					fileeditor.open()
+				end,
+				desc = "[E]xplorer (Mini.Files)",
+			},
+		},
 		config = function()
 			-- Better Around/Inside textobjects
 			--
@@ -807,22 +819,25 @@ require("lazy").setup({
 			require("mini.surround").setup({})
 
 			-- Simple and easy statusline.
-			--  You could remove this setup call if you don't like it,
-			--  and try some other statusline plugin
-			local statusline = require("mini.statusline")
-			-- set use_icons to true if you have a Nerd Font
-			statusline.setup({ use_icons = vim.g.have_nerd_font })
+			require("mini.statusline").setup({ use_icons = vim.g.have_nerd_font })
 
-			-- You can configure sections in the statusline by overriding their
-			-- default behavior. For example, here we set the section for
-			-- cursor location to LINE:COLUMN
-			---@diagnostic disable-next-line: duplicate-set-field
-			statusline.section_location = function()
-				return "%2l:%-2v"
-			end
+			-- notifications
+			require("mini.notify").setup({})
 
-			-- ... and there is more!
-			--  Check out: https://github.com/echasnovski/mini.nvim
+			-- file navigation
+			require("mini.files").setup({
+				-- Customization of explorer windows
+				windows = {
+					-- Whether to show preview of file/directory under cursor
+					preview = true,
+					-- Width of focused window
+					width_focus = 50,
+					-- Width of non-focused window
+					width_nofocus = 30,
+					-- Width of preview window
+					width_preview = 100,
+				},
+			})
 		end,
 	},
 	{ -- Highlight, edit, and navigate code
@@ -932,37 +947,37 @@ require("lazy").setup({
 			end)
 		end,
 	},
-	{
-		"stevearc/oil.nvim",
-		opts = {},
-		dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-		keys = {
-			{
-				mode = "n",
-				"<Leader>e",
-				function()
-					local oil = require("oil")
-					oil.open_float()
-					oil.open_preview()
-				end,
-				desc = "[E]xplorer (Oil)",
-			},
-		},
-		config = function()
-			require("oil").setup({
-				vim.api.nvim_create_autocmd("User", {
-					pattern = "OilEnter",
-					callback = vim.schedule_wrap(function(args)
-						local oil = require("oil")
-						if vim.api.nvim_get_current_buf() == args.data.buf and oil.get_cursor_entry() then
-							oil.open_preview()
-						end
-					end),
-				}),
-			})
-		end,
-		lazy = false,
-	},
+	-- {
+	-- 	"stevearc/oil.nvim",
+	-- 	opts = {},
+	-- 	dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+	-- 	keys = {
+	-- 		{
+	-- 			mode = "n",
+	-- 			"<Leader>e",
+	-- 			function()
+	-- 				local oil = require("oil")
+	-- 				oil.open_float()
+	-- 				oil.open_preview()
+	-- 			end,
+	-- 			desc = "[E]xplorer (Oil)",
+	-- 		},
+	-- 	},
+	-- 	config = function()
+	-- 		require("oil").setup({
+	-- 			vim.api.nvim_create_autocmd("User", {
+	-- 				pattern = "OilEnter",
+	-- 				callback = vim.schedule_wrap(function(args)
+	-- 					local oil = require("oil")
+	-- 					if vim.api.nvim_get_current_buf() == args.data.buf and oil.get_cursor_entry() then
+	-- 						oil.open_preview()
+	-- 					end
+	-- 				end),
+	-- 			}),
+	-- 		})
+	-- 	end,
+	-- 	lazy = false,
+	-- },
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",
