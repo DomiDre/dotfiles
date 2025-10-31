@@ -838,6 +838,29 @@ require("lazy").setup({
 					width_preview = 100,
 				},
 			})
+			-- Add keymap for jumping to file from within mini.files
+			vim.api.nvim_create_autocmd("User", {
+				pattern = "MiniFilesBufferCreate",
+				callback = function(args)
+					vim.keymap.set("n", "<leader>gf", function()
+						-- Close mini.files first, then schedule telescope to open
+						require("mini.files").close()
+						vim.schedule(function()
+							require("telescope.builtin").find_files({
+								attach_mappings = function(_, map)
+									map("i", "<CR>", function(prompt_bufnr)
+										local entry = require("telescope.actions.state").get_selected_entry()
+										local file = entry.path or entry.filename
+										require("telescope.actions").close(prompt_bufnr)
+										require("mini.files").open(file)
+									end)
+									return true
+								end,
+							})
+						end)
+					end, { buffer = args.data.buf_id, desc = "[G]o to [f]ile in mini.files" })
+				end,
+			})
 		end,
 	},
 	{ -- Highlight, edit, and navigate code
@@ -1160,15 +1183,16 @@ require("lazy").setup({
 		"jvgrootveld/telescope-zoxide",
 		config = function()
 			local t = require("telescope")
+
 			t.setup({
 				extensions = {
 					zoxide = {
 						prompt_title = "Zoxide",
 						mappings = {
 							default = {
+								-- When pressing <CR>, open the selected directory in mini.files!
 								after_action = function(selection)
-									vim.cmd("Oil " .. selection.path)
-									vim.api.nvim_feedkeys("_", "", false)
+									require("mini.files").open(selection.path)
 								end,
 							},
 						},
@@ -1176,18 +1200,8 @@ require("lazy").setup({
 				},
 			})
 			t.load_extension("zoxide")
-			-- This let you only have keymapping attached to oil buffer.
-			vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-				pattern = { "oil://*" },
-				callback = function()
-					vim.keymap.set(
-						"n",
-						"<leader>z",
-						t.extensions.zoxide.list,
-						{ desc = "Change directory with [z]oxide", buffer = 0 }
-					)
-				end,
-			})
+			-- Global keymap to launch zoxide picker anywhere
+			vim.keymap.set("n", "<leader>z", t.extensions.zoxide.list, { desc = "Jump with [z]oxide" })
 		end,
 	},
 	{
