@@ -43,6 +43,10 @@ tiling_drag modifier titlebar
 
 focus_follows_mouse no
 
+# setup keyboard layouts and allow toggling
+exec --no-startup-id setxkbmap -layout us,de -option grp:switch
+bindsym $mod+space exec --no-startup-id "setxkbmap -query | grep -q 'layout:.*us' && setxkbmap de || setxkbmap us"
+
 # start a terminal etc.
 bindsym $mod+Return exec i3-sensible-terminal
 bindsym control+mod1+t exec i3-sensible-terminal
@@ -99,7 +103,7 @@ bindsym $mod+e layout toggle split
 bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+bindsym $mod+q focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
@@ -180,4 +184,3 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
-
